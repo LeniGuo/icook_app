@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
 
 class SideBar extends StatelessWidget {
+  final List<List<String>> history;
+  final List<String> currentConversation;
+  final Function() startNewConversation;
+
+  SideBar({required this.history, required this.currentConversation, required this.startNewConversation});
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -19,12 +25,14 @@ class SideBar extends StatelessWidget {
           ),
           Expanded(
             child: ListView.builder(
-              itemCount: 10, // 假设历史消息有10条
+              itemCount: history.length,
               itemBuilder: (context, index) {
                 return ListTile(
-                  title: Text("历史消息 ${index + 1}"),
+                  title: Text('对话 ${index + 1}'),
                   onTap: () {
-                    // 处理历史消息点击
+                    // 点击历史对话，恢复到历史对话内容
+                    _startHistoricalConversation(history[index]);
+                    Navigator.pop(context); // 关闭侧边栏
                   },
                 );
               },
@@ -38,8 +46,23 @@ class SideBar extends StatelessWidget {
               // 处理个人主页点击
             },
           ),
+          Divider(),
+          ListTile(
+            leading: Icon(Icons.add),
+            title: Text("新建会话"),
+            onTap: () {
+              startNewConversation();
+              Navigator.pop(context); // 关闭侧边栏
+            },
+          ),
         ],
       ),
     );
+  }
+
+  void _startHistoricalConversation(List<String> conversation) {
+    // 恢复到历史对话
+    currentConversation.clear();
+    currentConversation.addAll(conversation);
   }
 }
