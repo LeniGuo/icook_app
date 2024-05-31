@@ -41,10 +41,10 @@ class _ChatScreenState extends State<ChatScreen> {
     Future.delayed(Duration(milliseconds: 500), () {
       setState(() {
         _messages.add(ChatMessage(
-          text: "请选择一个菜品种类:",
+          text: "Please select a dish type:",
           isUser: false,
           isSystem: true,
-          tags: ['中餐', '西餐', '甜点'],
+          tags: ['Chinese Food', 'Western Food', 'Dessert'],
           onTagTap: _handleTagSelection,
         ));
       });
@@ -56,7 +56,7 @@ class _ChatScreenState extends State<ChatScreen> {
       _currentConversation.add(tag);
       _messages.add(ChatMessage(text: tag, isUser: true));
       _messages.add(ChatMessage(
-        text: "这是你选择的 $tag 的食谱预览。",
+        text: "Here's a recipe preview of the $tag you've chosen.",
         isUser: false,
       ));
     });
@@ -117,7 +117,7 @@ class _ChatScreenState extends State<ChatScreen> {
               child: TextField(
                 controller: _textController,
                 onSubmitted: _handleSubmitted,
-                decoration: InputDecoration.collapsed(hintText: "发送消息..."),
+                decoration: InputDecoration.collapsed(hintText: "Message..."),
               ),
             ),
             IconButton(

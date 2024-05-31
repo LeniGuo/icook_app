@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:icook/frame/user/user.dart';
 
 class SideBar extends StatelessWidget {
   final List<List<String>> history;
@@ -13,14 +14,11 @@ class SideBar extends StatelessWidget {
       child: Column(
         children: <Widget>[
           UserAccountsDrawerHeader(
-            accountName: Text("用户姓名"),
+            accountName: Text("Peter"),
             accountEmail: Text("user@example.com"),
             currentAccountPicture: CircleAvatar(
-              backgroundColor: Colors.white,
-              child: Text(
-                "U",
-                style: TextStyle(fontSize: 40.0),
-              ),
+              backgroundImage: AssetImage('assets/images/user_avatar.jpg'),
+              radius: 40.0,
             ),
           ),
           Expanded(
@@ -28,7 +26,7 @@ class SideBar extends StatelessWidget {
               itemCount: history.length,
               itemBuilder: (context, index) {
                 return ListTile(
-                  title: Text('对话 ${index + 1}'),
+                  title: Text('Dialog ${index + 1}'),
                   onTap: () {
                     // 点击历史对话，恢复到历史对话内容
                     _startHistoricalConversation(history[index]);
@@ -41,15 +39,19 @@ class SideBar extends StatelessWidget {
           Divider(),
           ListTile(
             leading: Icon(Icons.person),
-            title: Text("个人主页"),
+            title: Text("USER"),
             onTap: () {
               // 处理个人主页点击
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => UserScreen()),
+              );
             },
           ),
           Divider(),
           ListTile(
             leading: Icon(Icons.add),
-            title: Text("新建会话"),
+            title: Text("New Chat"),
             onTap: () {
               startNewConversation();
               Navigator.pop(context); // 关闭侧边栏
