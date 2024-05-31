@@ -27,11 +27,14 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   final List<ChatMessage> _messages = [];
+  final List<List<String>> _history = []; // 存储历史消息
+  final List<String> _currentConversation = []; // 当前会话消息
   final TextEditingController _textController = TextEditingController();
 
   void _handleSubmitted(String text) {
     _textController.clear();
     setState(() {
+      _currentConversation.add(text);
       _messages.add(ChatMessage(text: text, isUser: true));
     });
 
@@ -50,11 +53,20 @@ class _ChatScreenState extends State<ChatScreen> {
 
   void _handleTagSelection(String tag) {
     setState(() {
+      _currentConversation.add(tag);
       _messages.add(ChatMessage(text: tag, isUser: true));
       _messages.add(ChatMessage(
         text: "这是你选择的 $tag 的食谱预览。",
         isUser: false,
       ));
+    });
+  }
+
+  void _startNewConversation() {
+    setState(() {
+      _history.add(List.from(_currentConversation)); // 将当前会话保存到历史
+      _currentConversation.clear();
+      _messages.clear();
     });
   }
 
@@ -70,7 +82,11 @@ class _ChatScreenState extends State<ChatScreen> {
         ),
         title: Text('Chat'),
       ),
-      drawer: SideBar(),
+      drawer: SideBar(
+        history: _history,
+        currentConversation: _currentConversation,
+        startNewConversation: _startNewConversation,
+      ),
       body: Column(
         children: <Widget>[
           Flexible(
