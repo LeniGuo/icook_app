@@ -63,6 +63,7 @@ flutter:
     - assets/images/mapotofu.jpg
     - assets/images/shrimp.jpg
     - assets/images/user_avatar.jpg
+    - assets/images/fish_salad.jpg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

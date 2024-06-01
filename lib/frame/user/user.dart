@@ -1,30 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:icook/frame/recipe/recipe.dart';
-class UserScreen extends StatelessWidget {
+class UserScreen extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'USER',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: PersonalHomePage(),
-    );
-  }
+  PersonalHomePage createState()=>PersonalHomePage();
 }
 
-class PersonalHomePage extends StatelessWidget {
+class PersonalHomePage extends State<UserScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('USER'),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
       ),
       body: ListView( // 移除了Center，因为ListView本身可以滚动，不需要再居中
         padding: const EdgeInsets.all(16.0),
@@ -69,6 +55,7 @@ class PersonalHomePage extends StatelessWidget {
   Widget _buildRecipes() {
     // 假设你有一些菜谱的数据
     List<Map<String, String>> recipes = [
+      {'name': 'Spanish Tuna Salad', 'imagePath': 'assets/images/fish_salad.jpg'},
       {'name': 'Mapo Tofu', 'imagePath': 'assets/images/mapotofu.jpg'},
       {'name': 'Shrimp', 'imagePath': 'assets/images/shrimp.jpg'},
       // ...更多菜谱
@@ -96,6 +83,7 @@ class RecipeCard extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => RecipeDetailPage(recipeName: recipe['name']!)),
+          //MaterialPageRoute(builder: (context) => RecipeDetailPage()),
         );
       },
       child: Container(
