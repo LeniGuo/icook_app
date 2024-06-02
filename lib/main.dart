@@ -30,6 +30,7 @@ class _ChatScreenState extends State<ChatScreen> {
   final List<List<String>> _history = []; // 存储历史消息
   final List<String> _currentConversation = []; // 当前会话消息
   final TextEditingController _textController = TextEditingController();
+  final Set<String> _selectedTags = Set<String>(); // 存储选中的标签
 
   void _handleSubmitted(String text) {
     _textController.clear();
@@ -41,11 +42,13 @@ class _ChatScreenState extends State<ChatScreen> {
     Future.delayed(Duration(milliseconds: 500), () {
       setState(() {
         _messages.add(ChatMessage(
-          text: "Please select a dish type:",
+          text: "请选择一个或多个菜品种类:",
           isUser: false,
           isSystem: true,
-          tags: ['Chinese Food', 'Western Food', 'Dessert'],
+          tags: ['中餐', '西餐', '甜点'],
           onTagTap: _handleTagSelection,
+          onConfirm: _confirmSelection,
+          selectedTags: _selectedTags,
         ));
       });
     });
@@ -53,12 +56,25 @@ class _ChatScreenState extends State<ChatScreen> {
 
   void _handleTagSelection(String tag) {
     setState(() {
-      _currentConversation.add(tag);
-      _messages.add(ChatMessage(text: tag, isUser: true));
-      _messages.add(ChatMessage(
-        text: "Here's a recipe preview of the $tag you've chosen.",
-        isUser: false,
-      ));
+      if (_selectedTags.contains(tag)) {
+        _selectedTags.remove(tag);
+      } else {
+        _selectedTags.add(tag);
+      }
+    });
+  }
+
+  void _confirmSelection() {
+    setState(() {
+      if (_selectedTags.isNotEmpty) {
+        String selectedTagsString = _selectedTags.join(", ");
+        _currentConversation.add(selectedTagsString);
+        _messages.add(ChatMessage(
+          text: "这是你选择的 $selectedTagsString 的食谱预览。",
+          isUser: false,
+        ));
+        _selectedTags.clear();
+      }
     });
   }
 
@@ -117,7 +133,7 @@ class _ChatScreenState extends State<ChatScreen> {
               child: TextField(
                 controller: _textController,
                 onSubmitted: _handleSubmitted,
-                decoration: InputDecoration.collapsed(hintText: "Message..."),
+                decoration: InputDecoration.collapsed(hintText: "发送消息..."),
               ),
             ),
             IconButton(
@@ -143,8 +159,10 @@ class ChatMessage extends StatelessWidget {
   final bool isSystem;
   final List<String>? tags;
   final Function(String)? onTagTap;
+  final VoidCallback? onConfirm;
+  final Set<String>? selectedTags;
 
-  ChatMessage({required this.text, required this.isUser, this.isSystem = false, this.tags, this.onTagTap});
+  ChatMessage({required this.text, required this.isUser, this.isSystem = false, this.tags, this.onTagTap, this.onConfirm, this.selectedTags});
 
   @override
   Widget build(BuildContext context) {
@@ -153,19 +171,32 @@ class ChatMessage extends StatelessWidget {
       child: isSystem && tags != null
           ? Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: tags!.map((tag) {
-          return GestureDetector(
-            onTap: () {
-              // 处理标签点击
-              if (onTagTap != null) {
-                onTagTap!(tag);
-              }
-            },
-            child: Chip(
-              label: Text(tag),
-            ),
-          );
-        }).toList(),
+        children: [
+          Wrap(
+            spacing: 6.0,
+            children: tags!.map((tag) {
+              final bool isSelected = selectedTags != null && selectedTags!.contains(tag);
+              return GestureDetector(
+                onTap: () {
+                  // 处理标签点击
+                  if (onTagTap != null) {
+                    onTagTap!(tag);
+                  }
+                },
+                child: Chip(
+                  label: Text(tag),
+                  backgroundColor: isSelected ? Colors.blue : null,
+                  labelStyle: TextStyle(color: isSelected ? Colors.white : null),
+                ),
+              );
+            }).toList(),
+          ),
+          SizedBox(height: 12.0), // 增加间隔
+          ElevatedButton(
+            onPressed: onConfirm,
+            child: Text('确认'),
+          ),
+        ],
       )
           : Row(
         mainAxisAlignment: isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
