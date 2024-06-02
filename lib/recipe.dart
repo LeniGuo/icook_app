@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:icook/frame/user/user.dart';
+import 'package:icook/user.dart';
 class RecipeDetailPage extends StatefulWidget {
   final String recipeName;
   RecipeDetailPage({required this.recipeName});

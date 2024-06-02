@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:icook/frame/recipe/recipe.dart';
+import 'package:icook/recipe.dart';
+import 'package:icook/upload.dart';
 class UserScreen extends StatefulWidget {
   @override
   PersonalHomePage createState()=>PersonalHomePage();
@@ -11,6 +12,16 @@ class PersonalHomePage extends State<UserScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('USER'),
+        actions: <Widget>[ // 在这里添加actions属性来放置按钮
+          IconButton(
+            icon: Icon(Icons.add), // 使用加号图标
+            tooltip: '上传菜谱',
+            onPressed: () {
+              // 导航到上传菜谱页面
+              Navigator.of(context).push(MaterialPageRoute(builder: (context) => UploadRecipeScreen()));
+            },
+          ),
+        ],
       ),
       body: ListView( // 移除了Center，因为ListView本身可以滚动，不需要再居中
         padding: const EdgeInsets.all(16.0),

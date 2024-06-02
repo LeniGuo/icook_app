@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:icook/frame/user/user.dart';
+import 'package:icook/user.dart';
 
 class SideBar extends StatelessWidget {
   final List<List<String>> history;
