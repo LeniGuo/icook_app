@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'sidebar.dart';
+import 'share.dart';
 
 void main() {
   runApp(MyApp());
@@ -17,7 +18,11 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSwatch().copyWith(secondary: Colors.blueAccent),
       ),
       debugShowCheckedModeBanner: false,
-      home: ChatScreen(),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => ChatScreen(),
+        '/share': (context) => SwipePage(), // Define the route for share.dart
+      },
     );
   }
 }
@@ -117,6 +122,14 @@ class _ChatScreenState extends State<ChatScreen> {
           ),
         ),
         title: Text('Chat'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.share), // Icon for sharing
+            onPressed: () {
+              Navigator.pushNamed(context, '/share'); // Navigate to share.dart
+            },
+          ),
+        ],
       ),
       drawer: SideBar(
         history: _history,
@@ -186,51 +199,51 @@ class ChatMessage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-        margin: isUser ? EdgeInsets.only(top: 10.0, bottom: 10.0, left: 80.0) : EdgeInsets.only(top: 10.0, bottom: 10.0, right: 80.0),
-        child: isSystem && tags != null
-            ? Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Wrap(
-              spacing: 6.0,
-              children: tags!.map((tag) {
-                return GestureDetector(
-                  onTap: () {
-                    if (onTagTap != null) {
-                      onTagTap!(tag);
-                    }
-                  },
-                  child: Chip(
-                    label: Text(tag),
-                  ),
-                );
-              }).toList(),
+      margin: isUser ? EdgeInsets.only(top: 10.0, bottom: 10.0, left: 80.0) : EdgeInsets.only(top: 10.0, bottom: 10.0, right: 80.0),
+      child: isSystem && tags != null
+          ? Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Wrap(
+            spacing: 6.0,
+            children: tags!.map((tag) {
+              return GestureDetector(
+                onTap: () {
+                  if (onTagTap != null) {
+                    onTagTap!(tag);
+                  }
+                },
+                child: Chip(
+                  label: Text(tag),
+                ),
+              );
+            }).toList(),
+          ),
+          SizedBox(height: 12.0), // 增加间隔
+          ElevatedButton(
+            onPressed: onConfirm,
+            child: Text('Confirm'),
+          ),
+        ],
+      )
+          : Row(
+        mainAxisAlignment: isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+        children: <Widget>[
+          image != null ? Image.file(File(image!.path), width: 200.0, height: 200.0) : Container(), // 如果image不为空，则显示图片
+          text != null ? Container(
+            decoration: BoxDecoration(
+              color: isUser ? Colors.blue : Colors.grey[300],
+              borderRadius: BorderRadius.circular(12.0),
             ),
-            SizedBox(height: 12.0), // 增加间隔
-            ElevatedButton(
-              onPressed: onConfirm,
-              child: Text('确认'),
+            padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
+            margin: EdgeInsets.only(left: isUser ? 8.0 : 0.0, right: isUser ? 0.0 : 8.0),
+            child: Text(
+              text!,
+              style: TextStyle(color: isUser ? Colors.white : Colors.black),
             ),
-          ],
-        )
-            : Row(
-            mainAxisAlignment: isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
-            children: <Widget>[
-        image != null ? Image.file(File(image!.path), width: 200.0, height: 200.0) : Container(), // 如果image不为空，则显示图片
-    text != null ? Container(
-    decoration: BoxDecoration(
-    color: isUser ? Colors.blue : Colors.grey[300],
-    borderRadius: BorderRadius.circular(12.0),
-    ),
-    padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
-    margin: EdgeInsets.only(left: isUser ? 8.0 : 0.0, right: isUser ? 0.0 : 8.0),
-    child: Text(
-    text!,
-    style: TextStyle(color: isUser ? Colors.white : Colors.black),
-    ),
-    ) : Container(), // 如果text不为空，则显示文本
-            ],
-        ),
+          ) : Container(), // 如果text不为空，则显示文本
+        ],
+      ),
     );
   }
 }
