@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:icook/register.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'sidebar.dart';
 import 'share.dart';
-
+import 'login.dart';
+import 'recipe.dart';
 void main() {
   runApp(MyApp());
 }
@@ -18,10 +20,12 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSwatch().copyWith(secondary: Colors.blueAccent),
       ),
       debugShowCheckedModeBanner: false,
-      initialRoute: '/',
+      initialRoute: '/login',
       routes: {
         '/': (context) => ChatScreen(),
         '/share': (context) => SwipePage(), // Define the route for share.dart
+        '/login': (context) => LoginScreen(),
+        '/register': (context) => RegisterScreen()
       },
     );
   }

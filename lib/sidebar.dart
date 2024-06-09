@@ -1,11 +1,40 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:icook/user.dart';
+class SideBar extends StatefulWidget {
+final List<List<String>> history;
+final List<String> currentConversation;
+final Function() startNewConversation;
 
-class SideBar extends StatelessWidget {
-  final List<List<String>> history;
-  final List<String> currentConversation;
-  final Function() startNewConversation;
+SideBar({
+required this.history,
+required this.currentConversation,
+required this.startNewConversation,
+});
 
-  SideBar({required this.history, required this.currentConversation, required this.startNewConversation});
+@override
+_SideBarState createState() => _SideBarState();
+}
+
+class _SideBarState extends State<SideBar> {
+String? username;
+String? email;
+
+Future<void> _loadUserData() async {
+final SharedPreferences prefs = await SharedPreferences.getInstance();
+username = prefs.getString('username');
+email = prefs.getString('email');
+
+// 更新UI
+setState(() {});
+}
+
+@override
+void initState() {
+super.initState();
+_loadUserData();
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -13,25 +42,22 @@ class SideBar extends StatelessWidget {
       child: Column(
         children: <Widget>[
           UserAccountsDrawerHeader(
-            accountName: Text("username"),
-            accountEmail: Text("user@example.com"),
+            accountName: Text(username ?? 'Guest'),
+            accountEmail: Text(email ?? 'guest@example.com'),
             currentAccountPicture: CircleAvatar(
-              backgroundColor: Colors.white,
-              child: Text(
-                "U",
-                style: TextStyle(fontSize: 40.0),
-              ),
+              backgroundImage: AssetImage('assets/images/user_avatar.jpg'),
+              radius: 40.0,
             ),
           ),
           Expanded(
             child: ListView.builder(
-              itemCount: history.length,
+              itemCount: widget.history.length,
               itemBuilder: (context, index) {
                 return ListTile(
                   title: Text('Chat ${index + 1}'),
                   onTap: () {
                     // 点击历史对话，恢复到历史对话内容
-                    _startHistoricalConversation(history[index]);
+                    _startHistoricalConversation(widget.history[index]);
                     Navigator.pop(context); // 关闭侧边栏
                   },
                 );
@@ -44,6 +70,11 @@ class SideBar extends StatelessWidget {
             title: Text("Personal homepage"),
             onTap: () {
               // 处理个人主页点击
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => UserScreen()),
+                //MaterialPageRoute(builder: (context) => RecipeDetailPage()),
+              );
             },
           ),
           Divider(),
@@ -51,7 +82,7 @@ class SideBar extends StatelessWidget {
             leading: Icon(Icons.add),
             title: Text("New Chat"),
             onTap: () {
-              startNewConversation();
+              widget.startNewConversation();
               Navigator.pop(context); // 关闭侧边栏
             },
           ),
@@ -62,7 +93,7 @@ class SideBar extends StatelessWidget {
 
   void _startHistoricalConversation(List<String> conversation) {
     // 恢复到历史对话
-    currentConversation.clear();
-    currentConversation.addAll(conversation);
+    widget.currentConversation.clear();
+    widget.currentConversation.addAll(conversation);
   }
 }

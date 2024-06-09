@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:icook/recipe.dart';
 import 'package:icook/upload.dart';
+import 'package:icook/edit.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 class UserScreen extends StatefulWidget {
   @override
   PersonalHomePage createState()=>PersonalHomePage();
@@ -15,10 +17,25 @@ class PersonalHomePage extends State<UserScreen> {
         actions: <Widget>[ // 在这里添加actions属性来放置按钮
           IconButton(
             icon: Icon(Icons.add), // 使用加号图标
-            tooltip: '上传菜谱',
+            tooltip: 'Upload Your Recipe',
             onPressed: () {
               // 导航到上传菜谱页面
               Navigator.of(context).push(MaterialPageRoute(builder: (context) => UploadRecipeScreen()));
+            },
+          ),
+          IconButton(
+            icon: Icon(Icons.edit),
+            tooltip: 'Edit User Info',
+            onPressed: () {
+              // 导航到编辑用户信息页面
+              Navigator.of(context).push(MaterialPageRoute(builder: (context) => EditProfileScreen()));
+            },
+          ),
+          IconButton(
+            icon: Icon(Icons.logout),
+            tooltip: 'Logout',
+            onPressed: () {
+              _logout();
             },
           ),
         ],
@@ -33,11 +50,27 @@ class PersonalHomePage extends State<UserScreen> {
       ),
     );
   }
+  late String _username;
+  late String _email;
 
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  Future<void> _loadUserData() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    // 读取用户名和邮箱
+    setState(() {
+      _username = prefs.getString('username') ?? 'Guest';
+      _email = prefs.getString('email') ?? 'guest@example.com';
+    });
+  }
   Widget _buildUserInfo() {
     // 假设用户名和邮箱是已知的字符串，实际情况下应动态获取
-    String userName = 'Peter';
-    String userEmail = 'user@example.com';
+    String userName = '$_username';
+    String userEmail = '$_email';
     return Container(
       padding: const EdgeInsets.all(16.0),
       child: Column(
@@ -77,6 +110,16 @@ class PersonalHomePage extends State<UserScreen> {
         return RecipeCard(recipe: recipe);
       }).toList(),
     );
+  }
+  void _logout() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    // 清除用户名和邮箱
+    await prefs.remove('username');
+    await prefs.remove('email');
+
+    // 通知用户已退出登录，可能需要重定向到登录页面
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Logout Successful')));
+    Navigator.pushReplacementNamed(context, '/login'); // 返回到第一个路由，通常是登录或主页
   }
 }
 
@@ -119,4 +162,5 @@ class RecipeCard extends StatelessWidget {
       ),
     );
   }
+
 }
