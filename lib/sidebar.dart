@@ -2,39 +2,36 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:icook/user.dart';
 class SideBar extends StatefulWidget {
-final List<List<String>> history;
-final List<String> currentConversation;
-final Function() startNewConversation;
+  final List<List<String>> history;
+  final List<String> currentConversation;
+  final Function() startNewConversation;
 
-SideBar({
-required this.history,
-required this.currentConversation,
-required this.startNewConversation,
-});
+  SideBar({
+    required this.history,
+    required this.currentConversation,
+    required this.startNewConversation,
+  });
 
-@override
-_SideBarState createState() => _SideBarState();
+  @override
+  _SideBarState createState() => _SideBarState();
 }
 
 class _SideBarState extends State<SideBar> {
-String? username;
-String? email;
+  String? username;
+  String? email;
 
-Future<void> _loadUserData() async {
-final SharedPreferences prefs = await SharedPreferences.getInstance();
-username = prefs.getString('username');
-email = prefs.getString('email');
-
-// 更新UI
-setState(() {});
-}
-
-@override
-void initState() {
-super.initState();
-_loadUserData();
-}
-
+  Future<void> _loadUserData() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    username = prefs.getString('username');
+    email = prefs.getString('email');
+    // 更新UI
+    setState(() {});
+  }
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
 
   @override
   Widget build(BuildContext context) {
