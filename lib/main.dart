@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:icook/register.dart';
+import 'package:icook/user.dart';
+import 'register.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'sidebar.dart';
 import 'share.dart';
 import 'login.dart';
 import 'recipe.dart';
+
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -22,16 +26,20 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       initialRoute: '/login',
       routes: {
-        '/': (context) => ChatScreen(),
-        '/share': (context) => SwipePage(), // Define the route for share.dart
-        '/login': (context) => LoginScreen(),
-        '/register': (context) => RegisterScreen()
+        '/': (context) => const ChatScreen(),
+        '/share': (context) => const SwipePage(), // Define the route for share.dart
+        '/login': (context) => const LoginScreen(),
+        '/register': (context) => const RegisterScreen(),
+        '/user': (context) => const UserScreen(),
+        '/recipe': (context) => RecipeDetailPage(recipeName: 'Tomato Scrambled Eggs'), // Provide the recipe name here
       },
     );
   }
 }
 
 class ChatScreen extends StatefulWidget {
+  const ChatScreen({super.key});
+
   @override
   _ChatScreenState createState() => _ChatScreenState();
 }
@@ -41,7 +49,7 @@ class _ChatScreenState extends State<ChatScreen> {
   final List<List<String>> _history = []; // 存储历史消息
   final List<String> _currentConversation = []; // 当前会话消息
   final TextEditingController _textController = TextEditingController();
-  final Set<String> _selectedTags = Set<String>(); // 存储选中的标签
+  final Set<String> _selectedTags = <String>{}; // 存储选中的标签
   final ImagePicker _picker = ImagePicker();
   XFile? _image;
 
@@ -52,13 +60,13 @@ class _ChatScreenState extends State<ChatScreen> {
       _messages.add(ChatMessage(text: text, isUser: true));
     });
 
-    Future.delayed(Duration(milliseconds: 500), () {
+    Future.delayed(const Duration(milliseconds: 500), () {
       setState(() {
         _messages.add(ChatMessage(
-          text: "please select tags",
+          text: "Please select tags",
           isUser: false,
           isSystem: true,
-          tags: ['tomato', 'egg'],
+          tags: const ['Tomato', 'Egg', 'None of them'],
           onTagTap: _handleTagSelection,
           onConfirm: _confirmSelection,
           selectedTags: _selectedTags,
@@ -77,14 +85,18 @@ class _ChatScreenState extends State<ChatScreen> {
     });
   }
 
-  void _confirmSelection() {
+  void _confirmSelection() async {
     setState(() {
       if (_selectedTags.isNotEmpty) {
         String selectedTagsString = _selectedTags.join(", ");
         _currentConversation.add(selectedTagsString);
         _messages.add(ChatMessage(
-          text: 'Preview of Recipe: Tomato and Egg Stir Fry\nIngredients: 2 large eggs\n1 medium tomato\n2 tablespoons vegetable oil\n1/2 teaspoon salt\n1/4 teaspoon sugar\n1/4 teaspoon soy sauce (optional)\n1/4 teaspoon white pepper (optional)\n',
+          text: 'Recommended Recipe Name:\n Tomato Scrambled Eggs',
           isUser: false,
+          buttonLabel: 'Go to Recipe',
+          onButtonPressed: () {
+            Navigator.pushNamed(context, '/recipe');
+          },
         ));
         _selectedTags.clear();
       }
@@ -121,14 +133,14 @@ class _ChatScreenState extends State<ChatScreen> {
       appBar: AppBar(
         leading: Builder(
           builder: (context) => IconButton(
-            icon: Icon(Icons.menu),
+            icon: const Icon(Icons.menu),
             onPressed: () => Scaffold.of(context).openDrawer(),
           ),
         ),
-        title: Text('Chat'),
+        title: const Text('Chat'),
         actions: [
           IconButton(
-            icon: Icon(Icons.share), // Icon for sharing
+            icon: const Icon(Icons.share), // Icon for sharing
             onPressed: () {
               Navigator.pushNamed(context, '/share'); // Navigate to share.dart
             },
@@ -144,14 +156,14 @@ class _ChatScreenState extends State<ChatScreen> {
         children: <Widget>[
           Flexible(
             child: ListView.builder(
-              padding: EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(8.0),
               itemBuilder: (_, int index) => _messages[index],
               itemCount: _messages.length,
             ),
           ),
-          Divider(height: 1.0),
+          const Divider(height: 1.0),
           Container(
-            decoration: BoxDecoration(color: Colors.white),
+            decoration: const BoxDecoration(color: Colors.white),
             child: _buildTextComposer(),
           ),
         ],
@@ -163,22 +175,22 @@ class _ChatScreenState extends State<ChatScreen> {
     return IconTheme(
       data: IconThemeData(color: Theme.of(context).colorScheme.secondary),
       child: Container(
-        margin: EdgeInsets.symmetric(horizontal: 8.0),
+        margin: const EdgeInsets.symmetric(horizontal: 8.0),
         child: Row(
           children: <Widget>[
             Flexible(
               child: TextField(
                 controller: _textController,
                 onSubmitted: _handleSubmitted,
-                decoration: InputDecoration.collapsed(hintText: "发送消息..."),
+                decoration: const InputDecoration.collapsed(hintText: "Send Messages..."),
               ),
             ),
             IconButton(
-              icon: Icon(Icons.camera_alt),
+              icon: const Icon(Icons.camera_alt),
               onPressed: _pickImage,
             ),
             IconButton(
-              icon: Icon(Icons.send),
+              icon: const Icon(Icons.send),
               onPressed: () => _handleSubmitted(_textController.text),
             ),
           ],
@@ -197,13 +209,15 @@ class ChatMessage extends StatelessWidget {
   final VoidCallback? onConfirm;
   final XFile? image; // 使用XFile来存储图像文件
   final Set<String>? selectedTags; // 添加选中的标签参数
+  final String? buttonLabel; // 按钮标签
+  final VoidCallback? onButtonPressed; // 按钮点击回调
 
-  ChatMessage({this.text, required this.isUser, this.isSystem = false, this.tags, this.onTagTap, this.onConfirm, this.image, this.selectedTags});
+  const ChatMessage({super.key, this.text, required this.isUser, this.isSystem = false, this.tags, this.onTagTap, this.onConfirm, this.image, this.selectedTags, this.buttonLabel, this.onButtonPressed});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: isUser ? EdgeInsets.only(top: 10.0, bottom: 10.0, left: 80.0) : EdgeInsets.only(top: 10.0, bottom: 10.0, right: 80.0),
+      margin: isUser ? const EdgeInsets.only(top: 10.0, bottom: 10.0, left: 80.0) : const EdgeInsets.only(top: 10.0, bottom: 10.0, right: 80.0),
       child: isSystem && tags != null
           ? Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -223,10 +237,10 @@ class ChatMessage extends StatelessWidget {
               );
             }).toList(),
           ),
-          SizedBox(height: 12.0), // 增加间隔
+          const SizedBox(height: 12.0), // 增加间隔
           ElevatedButton(
             onPressed: onConfirm,
-            child: Text('Confirm'),
+            child: const Text('Confirm'),
           ),
         ],
       )
@@ -239,11 +253,21 @@ class ChatMessage extends StatelessWidget {
               color: isUser ? Colors.blue : Colors.grey[300],
               borderRadius: BorderRadius.circular(12.0),
             ),
-            padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
+            padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
             margin: EdgeInsets.only(left: isUser ? 8.0 : 0.0, right: isUser ? 0.0 : 8.0),
-            child: Text(
-              text!,
-              style: TextStyle(color: isUser ? Colors.white : Colors.black),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  text!,
+                  style: TextStyle(color: isUser ? Colors.white : Colors.black),
+                ),
+                if (buttonLabel != null && onButtonPressed != null)
+                  ElevatedButton(
+                    onPressed: onButtonPressed,
+                    child: Text(buttonLabel!),
+                  ),
+              ],
             ),
           ) : Container(), // 如果text不为空，则显示文本
         ],
