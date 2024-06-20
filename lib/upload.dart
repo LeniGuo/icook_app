@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 class UploadRecipeScreen extends StatefulWidget {
+
   @override
   _UploadRecipeScreenState createState() => _UploadRecipeScreenState();
 }
@@ -15,7 +16,7 @@ class _UploadRecipeScreenState extends State<UploadRecipeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Upload Your Own Recipe'),
+        title: const Text('Upload Your Own Recipe'),
       ),
       body: SingleChildScrollView( // 使用SingleChildScrollView来处理可能的溢出
         child: Padding(
@@ -25,7 +26,7 @@ class _UploadRecipeScreenState extends State<UploadRecipeScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min, // 让卡片大小适应其内容
               children: <Widget>[
-                SizedBox(height: 16.0),
+                const SizedBox(height: 16.0),
                 TextField(
                   controller: _recipeNameController,
                   decoration: InputDecoration(
@@ -35,7 +36,7 @@ class _UploadRecipeScreenState extends State<UploadRecipeScreen> {
                     ),
                   ),
                 ),
-                SizedBox(height: 16.0), // 添加间距
+                const SizedBox(height: 16.0), // 添加间距
                 TextField(
                   controller: _recipeIngredientsController,
                   decoration: InputDecoration(
@@ -47,7 +48,7 @@ class _UploadRecipeScreenState extends State<UploadRecipeScreen> {
                   maxLines: 5, // 如果食材列表很长，允许多行输入
                   keyboardType: TextInputType.multiline,
                 ),
-                SizedBox(height: 16.0), // 添加间距
+                const SizedBox(height: 16.0), // 添加间距
                 TextField(
                   controller: _recipeStepsController,
                   decoration: InputDecoration(
@@ -61,7 +62,7 @@ class _UploadRecipeScreenState extends State<UploadRecipeScreen> {
                 ),
                 // ... 添加其他表单控件，如步骤、图片上传等
 
-                SizedBox(height: 24.0), // 添加更多间距
+                const SizedBox(height: 24.0), // 添加更多间距
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blue,
@@ -69,8 +70,9 @@ class _UploadRecipeScreenState extends State<UploadRecipeScreen> {
                   ),
                   onPressed: () {
                     // 处理按钮点击事件
+                    Navigator.of(context).pushReplacementNamed('/user');
                   },
-                  child: Text('Submit'),
+                  child: const Text('Submit'),
                 ),
               ],
             ),

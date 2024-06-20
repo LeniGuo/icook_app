@@ -1,24 +1,41 @@
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
+class SwipePage extends StatefulWidget {
+  const SwipePage({super.key});
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: SwipePage(),
-    );
-  }
+  _SwipePageState createState() => _SwipePageState();
 }
 
-class SwipePage extends StatelessWidget {
+class _SwipePageState extends State<SwipePage> {
+  final List<String> _imagePaths = [
+    'assets/images/tomato_eggs.jpg',
+    'assets/images/mapotofu.jpg',
+    'assets/images/fish_salad.jpg',
+    // ... 添加更多图片路径
+  ];
+  int _currentIndex = 0;
+
+  void _handleDislike() {
+    // 处理不喜欢逻辑，这里只是打印信息
+    setState(() {
+      _currentIndex = (_currentIndex + 1) % _imagePaths.length;
+    });
+    print('Disliked');
+  }
+
+  void _handleLike() {
+    // 跳转到下一张图片
+    setState(() {
+      _currentIndex = (_currentIndex + 1) % _imagePaths.length;
+    });
+    print('Liked');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Share'),
+        title: const Text('Image Swiper'),
       ),
       body: Center(
         child: Stack(
@@ -29,22 +46,18 @@ class SwipePage extends StatelessWidget {
               left: 20,
               bottom: 20,
               child: FloatingActionButton(
-                onPressed: () {
-                  print('Disliked');
-                },
-                child: Icon(Icons.thumb_down),
+                onPressed: _handleDislike,
                 backgroundColor: Colors.red,
+                child: const Icon(Icons.thumb_down),
               ),
             ),
             Positioned(
               right: 20,
               bottom: 20,
               child: FloatingActionButton(
-                onPressed: () {
-                  print('Liked');
-                },
-                child: Icon(Icons.thumb_up),
+                onPressed: _handleLike,
                 backgroundColor: Colors.green,
+                child: const Icon(Icons.thumb_up),
               ),
             ),
           ],
@@ -65,7 +78,7 @@ class SwipePage extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
           image: DecorationImage(
-            image: AssetImage('assets/images/share.jpeg'),
+            image: AssetImage(_imagePaths[_currentIndex]),
             fit: BoxFit.cover,
           ),
         ),

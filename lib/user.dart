@@ -4,6 +4,8 @@ import 'package:icook/upload.dart';
 import 'package:icook/edit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 class UserScreen extends StatefulWidget {
+  const UserScreen({super.key});
+
   @override
   PersonalHomePage createState()=>PersonalHomePage();
 }
@@ -13,10 +15,10 @@ class PersonalHomePage extends State<UserScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('USER'),
+        title: const Text('USER'),
         actions: <Widget>[ // 在这里添加actions属性来放置按钮
           IconButton(
-            icon: Icon(Icons.add), // 使用加号图标
+            icon: const Icon(Icons.add), // 使用加号图标
             tooltip: 'Upload Your Recipe',
             onPressed: () {
               // 导航到上传菜谱页面
@@ -24,7 +26,7 @@ class PersonalHomePage extends State<UserScreen> {
             },
           ),
           IconButton(
-            icon: Icon(Icons.edit),
+            icon: const Icon(Icons.edit),
             tooltip: 'Edit User Info',
             onPressed: () {
               // 导航到编辑用户信息页面
@@ -32,7 +34,7 @@ class PersonalHomePage extends State<UserScreen> {
             },
           ),
           IconButton(
-            icon: Icon(Icons.logout),
+            icon: const Icon(Icons.logout),
             tooltip: 'Logout',
             onPressed: () {
               _logout();
@@ -69,27 +71,27 @@ class PersonalHomePage extends State<UserScreen> {
   }
   Widget _buildUserInfo() {
     // 假设用户名和邮箱是已知的字符串，实际情况下应动态获取
-    String userName = '$_username';
-    String userEmail = '$_email';
+    String userName = _username;
+    String userEmail = _email;
     return Container(
       padding: const EdgeInsets.all(16.0),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          CircleAvatar(
+          const CircleAvatar(
             backgroundImage: AssetImage('assets/images/user_avatar.jpg'),
             radius: 40.0,
           ),
           const SizedBox(height: 16.0),
           Text(
             userName,
-            style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 20.0),
+            style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 20.0),
           ),
           const SizedBox(height: 4.0),
           Text(
             userEmail,
-            style: TextStyle(color: Colors.black, fontSize: 16.0),
+            style: const TextStyle(color: Colors.black, fontSize: 16.0),
           ),
         ],
       ),
@@ -99,6 +101,7 @@ class PersonalHomePage extends State<UserScreen> {
   Widget _buildRecipes() {
     // 假设你有一些菜谱的数据
     List<Map<String, String>> recipes = [
+      {'name': 'Tomato Scrambled Eggs', 'imagePath': 'assets/images/tomato_eggs.jpg'},
       {'name': 'Spanish Tuna Salad', 'imagePath': 'assets/images/fish_salad.jpg'},
       {'name': 'Mapo Tofu', 'imagePath': 'assets/images/mapotofu.jpg'},
       {'name': 'Shrimp', 'imagePath': 'assets/images/shrimp.jpg'},
@@ -118,7 +121,7 @@ class PersonalHomePage extends State<UserScreen> {
     await prefs.remove('email');
 
     // 通知用户已退出登录，可能需要重定向到登录页面
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Logout Successful')));
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Logout Successful')));
     Navigator.pushReplacementNamed(context, '/login'); // 返回到第一个路由，通常是登录或主页
   }
 }
@@ -127,7 +130,7 @@ class PersonalHomePage extends State<UserScreen> {
 class RecipeCard extends StatelessWidget {
   final Map<String, String> recipe;
 
-  RecipeCard({required this.recipe});
+  const RecipeCard({super.key, required this.recipe});
 
   @override
   Widget build(BuildContext context) {
@@ -150,13 +153,13 @@ class RecipeCard extends StatelessWidget {
               height: 150,
               fit: BoxFit.cover,
             ),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             Text(
               recipe['name']!,
-              style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 20.0),
+              style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 20.0),
               textAlign: TextAlign.center,
             ),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
           ],
         ),
       ),
